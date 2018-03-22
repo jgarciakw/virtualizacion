@@ -7,12 +7,12 @@ import codecs
 
 class MyWindow(QtGui.QMainWindow):
     def __init__(self):
-        #lpr -P tejuelos -o raw /tmp/tejuelos 
+        #lpr -P tejuelos -o raw /tmp/tejuelos
         self.CABECERA_DE="BICC"
         self.CABECERA_IZ="UEX"
         self.IMPRESORA="tejuelos"
         super(MyWindow, self).__init__()
-        uic.loadUi('mainwindow.ui', self)
+        uic.loadUi('ejemplos/tejuelos/mainwindow.ui', self)
         self.show()
         self.setWindowTitle(self.CABECERA_DE+" TEJUELOS")
         self.cabecera.setText(self.CABECERA_IZ+"                     "+self.CABECERA_DE)
@@ -23,15 +23,15 @@ class MyWindow(QtGui.QMainWindow):
         lines = self.signaturas.toPlainText().split("\n")
         outfile = codecs.open('/tmp/tejuelos', 'w','iso-8859-1')
         outfile.write('FR"TEJU"\n')
-        
+
         for l in lines:
             l.replace("  "," ")
-           
+
             part=l.split(" ")
             if len(l)!=0:
               print "--"+str(len(l))+" __ "+l+";"
               outfile.write('?\n')
-              outfile.write(self.CABECERA_DE+"\n") 
+              outfile.write(self.CABECERA_DE+"\n")
               for i in range(0,len(part)):
                   print str(i)+"  "+unicode(part[i])
                   outfile.write(unicode(part[i])+"\n")
@@ -45,7 +45,7 @@ class MyWindow(QtGui.QMainWindow):
         commands.getoutput(cmd)
     def borrar(self):
         self.signaturas.clear();
-        
+
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
