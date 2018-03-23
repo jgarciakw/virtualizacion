@@ -13,19 +13,19 @@ baseDatos="/var/lib/mysql/ruben"
 
 def ejecutar():
     print("Creando copia del directorio /etc.......")
-    call('rsync', '-avz', '--delete', '--backup', '/etc', rutaCode)
+    call(['rsync', '-avz', '--delete', '--backup', '/etc', rutaCode])
 
     print("Creando copia del directorio /var/www.........")
-    call('rsync', '-avz', '--delete', '--backup', '/var/www', rutaCode)
+    call(['rsync', '-avz', '--delete', '--backup', '/var/www', rutaCode])
 
     print("Desmontado particion.........")
-    call('umount', rutaBack)
+    call(['umount', rutaBack])
 
 
 
 if os.path.exists(rutaBack):
     print("Montando particion --> /mnt/backup")
-    call('mount', '-t', 'nfs', rutaDisk, rutaBack)
+    call(['mount', '-t', 'nfs', rutaDisk, rutaBack])
 
     if os.path.ismount(rutaBack):
         ejecutar()
@@ -35,7 +35,7 @@ else:
     os.mkdir(rutaBack)
 
     print("Montando particion --> /mnt/backup")
-    call('mount', '-t', 'nfs', rutaDisk, rutaBack)
+    call(['mount', '-t', 'nfs', rutaDisk, rutaBack])
 
     if os.path.ismount(rutaBack):
         print("Creando directorio --> /mnt/backup/rbpj")
