@@ -48,12 +48,3 @@ else:
         os.mkdir(rutaDb)
 
         ejecutar()
-
-
-
-
-
-
-
-
-
