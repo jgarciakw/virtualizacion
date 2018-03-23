@@ -23,9 +23,9 @@ def ejecutar():
 
 
 
-if os.path.exists(rutaBack, os.F_OK):
+if os.path.exists(rutaBack):
     print("Montando particion --> /mnt/backup")
-    call('mount', '-t',  nfs $rutaDisk $rutaBack)
+    call('mount', '-t', 'nfs', rutaDisk, rutaBack)
 
     if os.path.ismount(rutaBack):
         ejecutar()
@@ -35,7 +35,7 @@ else:
     os.mkdir(rutaBack)
 
     print("Montando particion --> /mnt/backup")
-    call('mount', '-t', 'nfs', 'rutaDisk', 'rutaBack')
+    call('mount', '-t', 'nfs', rutaDisk, rutaBack)
 
     if os.path.ismount(rutaBack):
         print("Creando directorio --> /mnt/backup/rbpj")
