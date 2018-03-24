@@ -1,0 +1,9 @@
+[Unit]
+Description=Run script_rm daily
+
+[Timer]
+OnCalendar=* *-*-* 23:00:00
+Unit=rm.service
+
+[Install]
+WantedBy=timers.target

@@ -1,48 +1,48 @@
 import os
 import time
+import json
 from subprocess import call
 
-rutaDisk="158.49.112.72:/volume2/pve73"
-rutaRbpj="/mnt/backup/rbpj"
-rutaBack="/mnt/backup"
-rutaCode="/mnt/backup/rbpj/code"
-rutaDb="/mnt/backup/rbpj/db"
-rutaSql="/mnt/backup/rbpj/db/ruben"
-baseDatos="/var/lib/mysql/ruben"
-
-
-def ejecutar():
+def ejecutar(paths):
     print("Borrando copias antiguas......")
     #call(['mysqldump', '-uroot', '-pcapitantrueno', '--opt', '--all-databases', '>', path])
-    os.system('find ' + rutaDb +' -type f -mmin +120 -exec rm {} \;')
+    os.system('find ' + paths['rutaDb'] +' -type f -mmin +120 -exec rm {} \;')
 
     print("Desmontado particion.........")
-    call(['umount', rutaBack])
+    call(['umount', paths['rutaBack']])
 
 
+def cargarJson():
+    with open('data.json') as f:
+        config = json.load(f)
 
-if os.path.exists(rutaBack):
+    return config
+
+
+paths = cargarJson()
+
+if os.path.exists(paths["rutaBack"]):
     print("Montando particion --> /mnt/backup")
-    call(['mount', '-t', 'nfs', rutaDisk, rutaBack])
+    call(['mount', '-t', 'nfs', paths["rutaDisk"], paths["rutaBack"]])
 
-    if os.path.ismount(rutaBack):
-        ejecutar()
+    if os.path.ismount(paths["rutaBack"]):
+        ejecutar(paths)
 
 else:
     print("Creando directorio --> /mnt/backup")
-    os.mkdir(rutaBack)
+    os.mkdir(paths["rutaBack"])
 
     print("Montando particion --> /mnt/backup")
-    call(['mount', '-t', 'nfs', rutaDisk, rutaBack])
+    call(['mount', '-t', 'nfs', paths['rutaDisk'], paths['rutaBack']])
 
-    if os.path.ismount(rutaBack):
+    if os.path.ismount(paths["rutaBack"]):
         print("Creando directorio --> /mnt/backup/rbpj")
-        os.mkdir(rutaRbpj)
+        os.mkdir(paths["rutaRbpj"])
 
         print("Creando directorio --> /mnt/backup/rbpj/code")
-        os.mkdir(rutaCode)
+        os.mkdir(paths["rutaCode"])
 
         print("Creando directorio --> /mnt/backup/rbpj/db")
-        os.mkdir(rutaDb)
+        os.mkdir(paths["rutaDb"])
 
-        ejecutar()
+        ejecutar(paths)
