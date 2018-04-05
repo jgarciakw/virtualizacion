@@ -1,9 +1,16 @@
-{
-  "rutaDisk":"158.49.112.72:/volume2/pve73",
-  "rutaRbpj":"/mnt/backup/rbpj",
-  "rutaBack":"/mnt/backup",
-  "rutaCode":"/mnt/backup/rbpj/code",
-  "rutaDb":"/mnt/backup/rbpj/db",
-  "rutaSql":"/mnt/backup/rbpj/db/ruben",
-  "baseDatos":"/var/lib/mysql/ruben"
-}
+[
+   {
+      "rutaDisk":"158.49.112.72:/volume2/pve73",
+      "rutaRbpj":"/mnt/backup/rbpj",
+      "rutaBack":"/mnt/backup",
+      "rutaCode":"/mnt/backup/rbpj/code",
+      "rutaDb":"/mnt/backup/rbpj/db",
+      "rutaSql":"/mnt/backup/rbpj/db/ruben",
+      "baseDatos":"/var/lib/mysql/ruben"
+   },
+   {
+      "tiempo_code":12,
+      "tiempo_db":2,
+      "tiempo_rm":24
+   }
+]

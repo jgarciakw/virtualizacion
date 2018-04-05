@@ -6,13 +6,13 @@ from subprocess import call
 
 def ejecutar(paths):
     print("Creando copia del directorio /etc.......")
-    call(['rsync', '-avz', '--delete', '--backup', '/etc', paths['rutaCode']])
+    call(['rsync', '-avz', '--delete', '--backup', '/etc', paths[0]['rutaCode']])
 
     print("Creando copia del directorio /var/www.........")
-    call(['rsync', '-avz', '--delete', '--backup', '/var/www', paths['rutaCode']])
+    call(['rsync', '-avz', '--delete', '--backup', '/var/www', paths[0]['rutaCode']])
 
     print("Desmontado particion.........")
-    call(['umount', paths['rutaBack']])
+    call(['umount', paths[0]['rutaBack']])
 
 
 
@@ -25,28 +25,32 @@ def cargarJson():
 
 paths = cargarJson()
 
-if os.path.exists(paths["rutaBack"]):
-    print("Montando particion --> /mnt/backup")
-    call(['mount', '-t', 'nfs', paths["rutaDisk"], paths["rutaBack"]])
+while True:
 
-    if os.path.ismount(paths["rutaBack"]):
-        ejecutar(paths)
+    if os.path.exists(paths[0]["rutaBack"]):
+        print("Montando particion --> /mnt/backup")
+        call(['mount', '-t', 'nfs', paths[0]["rutaDisk"], paths[0]["rutaBack"]])
 
-else:
-    print("Creando directorio --> /mnt/backup")
-    os.mkdir(paths["rutaBack"])
+        if os.path.ismount(paths[0]["rutaBack"]):
+            ejecutar(paths)
 
-    print("Montando particion --> /mnt/backup")
-    call(['mount', '-t', 'nfs', paths['rutaDisk'], paths['rutaBack']])
+    else:
+        print("Creando directorio --> /mnt/backup")
+        os.mkdir(paths[0]["rutaBack"])
 
-    if os.path.ismount(paths["rutaBack"]):
-        print("Creando directorio --> /mnt/backup/rbpj")
-        os.mkdir(paths["rutaRbpj"])
+        print("Montando particion --> /mnt/backup")
+        call(['mount', '-t', 'nfs', paths[0]['rutaDisk'], paths[0]['rutaBack']])
 
-        print("Creando directorio --> /mnt/backup/rbpj/code")
-        os.mkdir(paths["rutaCode"])
+        if os.path.ismount(paths[0]["rutaBack"]):
+            print("Creando directorio --> /mnt/backup/rbpj")
+            os.mkdir(paths[0]["rutaRbpj"])
 
-        print("Creando directorio --> /mnt/backup/rbpj/db")
-        os.mkdir(paths["rutaDb"])
+            print("Creando directorio --> /mnt/backup/rbpj/code")
+            os.mkdir(paths[0]["rutaCode"])
 
-        ejecutar(paths)
+            print("Creando directorio --> /mnt/backup/rbpj/db")
+            os.mkdir(paths[0]["rutaDb"])
+
+            ejecutar(paths)
+
+    time.sleep(paths[1]['tiempo_code']*3600)
