@@ -15,7 +15,7 @@ def ejecutar(paths):
 
 
 def cargarJson():
-    with open('data.json') as f:
+    with open('/home/alumno/sesion4/data.json') as f:
         config = json.load(f)
 
     return config
