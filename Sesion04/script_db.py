@@ -5,7 +5,7 @@ from subprocess import call
 
 
 def ejecutar(paths):
-    nombre = time.strftime("%d-%m-%Y-%H:%M",time.gmtime())
+    nombre = time.strftime("%d-%m-%Y-%H:%M",time.localtime())
     #print("Creando copia de la base de datos.........")
     #call(['mysqldump', '-uroot', '-pcapitantrueno', '--opt', '--all-databases', '>', path])
     os.system('mysqldump -uroot -pcapitantrueno --opt --all-databases > /mnt/backup/rbpj/db/' + nombre + '.sql')
