@@ -1,44 +1,46 @@
 import commands
+import time
+import json
 
-vms = []
+def recolectorDatos():
+    vms = []
 
-maquinas = commands.getoutput('xe vm-list tags=BACKUP params=uuid,name-label').strip('\n').split('\n\n\n')
+    maquinas = commands.getoutput("xe vm-list tags=BACKUP | awk '/uuid/{print substr($0,24)}/name-label/{print substr($0,24)}/power-state/{print substr($0,24)}'").split('\n')
 
-for m in maquinas:
-    params = m.split('\n')
+    for i in range(0, len(maquinas), 3):
+        dic = {}
+        dic['uuid'] = maquinas[i]
+        dic['name-label'] = maquinas[i+1]
+        dic['power-state'] = maquinas[i+2]
 
-    dic = {}
+        interfaces = commands.getoutput("xe vm-vif-list vm={}".format(maquinas[i+1])+" | awk '/MAC/{print substr($0,31)}/device/{print substr($0,31)}'").split('\n')
 
-    for p in params:
+        for i in range(0, len(interfaces), 2):
+            dic['MAC'+interfaces[i]] = interfaces[i+1]
 
-        elem = p.strip(' ').split(' ')
+        vms.append(dic)
 
-        dic[elem[0]] = elem[-1]
-
-
-    vms.append(dic)
-
-#En este punto, vms es una lista de diccionarios, y cada diccionario esta formado por {name-label:---, uuid:---}
-#for machine in vms:
-#    print(machine)
-
-
-for dic in vms:
-
-    interfaces = commands.getoutput('xe vm-vif-list vm={} params=MAC,device'.format(dic['name-label'])).strip('\n').split('\n\n\n')
-
-    for i in interfaces:
-        params = i.split('\n')
-
-        device = params[0].strip(' ').split(' ')
-        mac = params[1].strip(' ').split(' ')
-
-        key = mac[0] + device[-1]
-        value = mac[-1]
-
-        dic[key] = value
+    return vms
 
 
-#En este punto, vms es una lista de diccionarios, y cada diccionario esta formado por {name-label:---, uuid:---, MAC1:---, MAC0:---}
-#for machine in vms:
-#    print(machine)
+vms = recolectorDatos()
+
+for m in vms:
+    if m['power-state'] == 'running':
+        path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + 'Snapshot'
+        cmd = 'xe vm-snapshot vm={} new-name-label={}'.format(m['name-label'], m['name-label'] + 'Snapshot')
+        snapshotUuid = commands.getoutput(cmd)
+
+        path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + time.strftime("%d-%m-%Y-%H:%M",time.localtime()) + '.xva'
+        cmd = 'xe vm-export vm={} filename={} preserve-power-state=true'.format(m['name-label']+'Snapshot', path)
+        print(commands.getoutput(cmd))
+
+    else:
+        path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + time.strftime("%d-%m-%Y-%H:%M",time.localtime()) + '.xva'
+        cmd = 'xe vm-export vm={} filename={} preserve-power-state=true'.format(m['name-label'], path)
+        print(commands.getoutput(cmd))
+
+    with open('/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + time.strftime("%d-%m-%Y-%H:%M",time.localtime()) + '.json', 'w') as f:
+        f.write(json.dumps(m))
+
+
