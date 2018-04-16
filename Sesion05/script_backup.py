@@ -27,6 +27,7 @@ vms = recolectorDatos()
 
 for m in vms:
     print(m['name-label'])
+    date = time.strftime("%d-%m-%Y-%H:%M",time.localtime())
     if m['power-state'] == 'running':
         cmd = 'xe vm-snapshot vm={} new-name-label={}'.format(m['name-label'], m['name-label'] + 'Snapshot')
         snapshotUuid = commands.getoutput(cmd)
@@ -35,7 +36,7 @@ for m in vms:
         cmd = 'xe template-param-set is-a-template=false uuid={}'.format(snapshotUuid)
         commands.getoutput(cmd)
 
-        path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + time.strftime("%d-%m-%Y-%H:%M",time.localtime()) + '.xva'
+        path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + date + '.xva'
         cmd = 'xe vm-export vm={} filename={} preserve-power-state=true'.format(m['name-label'] + 'Snapshot', path)
         commands.getoutput(cmd)
         print('export ready...')
@@ -44,12 +45,12 @@ for m in vms:
         commands.getoutput(cmd)
 
     else:
-        path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + time.strftime("%d-%m-%Y-%H:%M",time.localtime()) + '.xva'
+        path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + date + '.xva'
         cmd = 'xe vm-export vm={} filename={} preserve-power-state=true'.format(m['name-label'], path)
         commands.getoutput(cmd)
         print('export ready...')
 
-    with open('/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + time.strftime("%d-%m-%Y-%H:%M",time.localtime()) + '.json', 'w') as f:
+    with open('/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + date + '.json', 'w') as f:
         f.write(json.dumps(m))
 
     print('json ready...')
