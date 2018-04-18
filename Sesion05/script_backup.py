@@ -29,7 +29,7 @@ for m in vms:
     print(m['name-label'])
     date = time.strftime("%d-%m-%Y-%H:%M",time.localtime())
     if m['power-state'] == 'running':
-        cmd = 'xe vm-snapshot vm={} new-name-label={}'.format(m['name-label'], m['name-label'] + 'Snapshot')
+        cmd = 'xe vm-snapshot vm={} new-name-label={}'.format(m['name-label'], m['name-label'])
         snapshotUuid = commands.getoutput(cmd)
         print('snapshot ready...')
 
@@ -37,7 +37,7 @@ for m in vms:
         commands.getoutput(cmd)
 
         path = '/var/run/sr-mount/58fc9d3f-f3a5-28d7-de60-c085aebad1a1/rbpj/' + m['name-label'] + date + '.xva'
-        cmd = 'xe vm-export vm={} filename={} preserve-power-state=true'.format(m['name-label'] + 'Snapshot', path)
+        cmd = 'xe vm-export uuid={} filename={} preserve-power-state=true'.format(snapshotUuid, path)
         commands.getoutput(cmd)
         print('export ready...')
 
